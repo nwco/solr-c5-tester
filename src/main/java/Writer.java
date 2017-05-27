@@ -11,8 +11,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Writer {
-  public static final String ZK_ADDRESS = "mano-c512.gce.cloudera.com:2181/solr";
-  public static final String COLLECTION = "collection1";
+  public static final String ZK_ADDRESS = "nwhite-1.gce.cloudera.com:2181/solr";
+  public static final String COLLECTION = "employees";
   static public final String characters = "abcdefghijklmnopqrstuvwxyz";
   static private final Logger log = LoggerFactory.getLogger(Writer.class);
   static long from = 100000L; // first ID to be inserted
@@ -20,6 +20,8 @@ public class Writer {
   static AtomicLong counter = new AtomicLong(from);
 
   public static void main(String[] args) {
+
+    System.setProperty("java.security.auth.login.config", "/Users/nwhite/jaas-solr.conf");
 
     Arrays.asList(new int[8]).stream().forEach(i -> new Thread(() -> {
       String zk = ZK_ADDRESS;
@@ -32,7 +34,7 @@ public class Writer {
         if (id % 10000 == 0) log.info(Long.toString(id));
         SolrInputDocument doc = new SolrInputDocument();
         doc.addField("id", id);
-        doc.addField("name", "Doksi #" + id);
+        doc.addField("firstname", "Nick #" + id);
         doc.addField("text", getRandomText());
         docs.add(doc);
         if (docs.size() == 100) {
